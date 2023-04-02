@@ -1,0 +1,24 @@
+version: '2'
+services:
+  zookeeper:
+    image: quay.io/debezium/zookeeper:2.2
+    ports:
+     - 2181:2181
+     - 2888:2888
+     - 3888:3888
+  kafka:
+    image: quay.io/debezium/kafka:2.2
+    ports:
+     - 9092:9092
+    links:
+     - zookeeper
+    environment:
+     - ZOOKEEPER_CONNECT=zookeeper:2181
+  tensorflow:
+    image: tensorflow/tensorflow:2.12.0-jupyter
+    ports:
+      - 8888:8888
+    volumes:
+      - ./data:/data
+    links:
+      - kafka
