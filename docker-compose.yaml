@@ -15,7 +15,9 @@ services:
     environment:
      - ZOOKEEPER_CONNECT=zookeeper:2181
   tensorflow:
-    image: tensorflow/tensorflow:2.12.0-jupyter
+    image: debezium/tensorflow-demo
+    build:
+      context: ./tensorflow
     ports:
       - 8888:8888
     volumes:
