@@ -2,7 +2,8 @@
 
 import pandas as pd
 
-SUSY_DATA = "./data/SUSY.csv.gz"
+CSV_DATA = "./data/SUSY.csv.gz"
+SQL_DATA = "./postgres/susy.sql"
 COLUMNS = [
     #  labels
     'class',
@@ -27,12 +28,14 @@ COLUMNS = [
     'dPhi_r_b',
     'cos_theta_r1'
 ]
-INSERT_STMT = "INSERT INTO susy({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}) VALUES(floor({}), {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {});\n"
+CREATE_STMT = "CREATE TABLE susy_train(id SERIAL NOT NULL PRIMARY KEY, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float);"
+INSERT_STMT = "INSERT INTO susy_train({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}) VALUES({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {});\n"
 CHUNK_SIZE = 100
 
-df = pd.read_csv(SUSY_DATA, compression="gzip", chunksize=CHUNK_SIZE, header=None, names=COLUMNS)
+df = pd.read_csv(CSV_DATA, compression="gzip", chunksize=CHUNK_SIZE, header=None, names=COLUMNS)
 chunk = df.get_chunk()
 
-with open("susy.sql", 'w') as f:
+with open(SQL_DATA, 'w') as f:
+    f.write(CREATE_STMT.format(*COLUMNS))
     for row in chunk.values:
         f.write(INSERT_STMT.format(*COLUMNS, *row))
