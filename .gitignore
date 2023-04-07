@@ -132,4 +132,4 @@ dmypy.json
 data/
 
 # SQL export of the data
-postgres/susy.sql
+susy-search/postgres/susy.sql
