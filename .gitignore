@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Data directory
+data/
+
+# SQL export of the data
+postgres/susy.sql
