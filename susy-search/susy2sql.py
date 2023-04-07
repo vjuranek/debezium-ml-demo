@@ -3,7 +3,8 @@
 import pandas as pd
 
 CSV_DATA = "./data/SUSY.csv.gz"
-SQL_DATA = "./postgres/susy.sql"
+SQL_DATA_TRAIN = "./postgres/susy-train.sql"
+SQL_DATA_TEST = "./postgres/susy-test.sql"
 COLUMNS = [
     #  labels
     'class',
@@ -28,14 +29,22 @@ COLUMNS = [
     'dPhi_r_b',
     'cos_theta_r1'
 ]
-CREATE_STMT = "CREATE TABLE susy_train(id SERIAL NOT NULL PRIMARY KEY, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float);"
-INSERT_STMT = "INSERT INTO susy_train({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}) VALUES({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {});\n"
-CHUNK_SIZE = 100
+CREATE_STMT = "CREATE TABLE {}(id SERIAL NOT NULL PRIMARY KEY, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float);"
+INSERT_STMT = "INSERT INTO {}({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}) VALUES({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {});\n"
+CHUNK_SIZE = 5000
 
 df = pd.read_csv(CSV_DATA, compression="gzip", chunksize=CHUNK_SIZE, header=None, names=COLUMNS)
-chunk = df.get_chunk()
 
-with open(SQL_DATA, 'w') as f:
-    f.write(CREATE_STMT.format(*COLUMNS))
+# train data set
+chunk = df.get_chunk()
+with open(SQL_DATA_TRAIN, 'w') as f:
+    f.write(CREATE_STMT.format("susy_train", *COLUMNS))
     for row in chunk.values:
-        f.write(INSERT_STMT.format(*COLUMNS, *row))
+        f.write(INSERT_STMT.format("susy_train", *COLUMNS, *row))
+
+# test data set
+chunk = df.get_chunk()
+with open(SQL_DATA_TEST, 'w') as f:
+    # f.write(CREATE_STMT.format("susy_test", *COLUMNS))
+    for row in chunk.values:
+        f.write(INSERT_STMT.format("susy_test", *COLUMNS, *row))

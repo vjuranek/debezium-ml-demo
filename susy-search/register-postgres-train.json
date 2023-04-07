@@ -1,0 +1,20 @@
+{
+    "name": "susy-connector-train",
+    "config": {
+        "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+        "tasks.max": "1",
+	"slot.name": "debezium_susy_train",
+        "database.hostname": "postgres",
+        "database.port": "5432",
+        "database.user": "postgres",
+        "database.password": "postgres",
+        "database.dbname" : "postgres",
+        "topic.prefix": "tf",
+        "table.include.list": "public.susy_train",
+	"key.converter": "org.apache.kafka.connect.storage.StringConverter",
+	"value.converter": "org.apache.kafka.connect.storage.StringConverter",
+	"transforms": "unwrap, susy",
+	"transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+	"transforms.susy.type": "io.debezium.transforms.SusyFlatten"
+    }
+}

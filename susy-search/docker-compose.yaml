@@ -44,7 +44,5 @@ services:
       context: ./tensorflow
     ports:
       - 8888:8888
-    volumes:
-      - ./data:/data
     links:
       - kafka
