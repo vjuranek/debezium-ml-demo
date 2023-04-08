@@ -1,0 +1,55 @@
+The purpose of this demo is to show complete machine learning pipeline including loading and streaming data from the database. 
+This demo is slightly modified https://www.tensorflow.org/io/tutorials/kafka[Tensorflow Kafka tutorial].
+While the original demo loads data into the Kafka via Python script, more realistic use case is that the data for model traning already exists in the database.
+Data which we would like to clasify can be also already stored in the database or can be stored in the real time in the database.
+This demo shows how you can leverage Debezium capabilitieds for both of the cases - loading existing data from the database as well as streaming newly added data, using change data capture (CDC), into the neural network model.
+CDC is also very suitable for online machine learning when the model is adjusted based on the new incomming data.
+However, online machine leanring is not covered in this demo.
+
+Original data is provided in a CSV file.
+As we want to show loading the data from the database, we need to load the data set into the database first.
+We want to samples - one for traning and one for clasification (testing).
+Running following script prepares these two data set, each containing 5,000 records. 
+```
+./susy2sql.py
+```
+The first data set, `susy-train.sql`, is loaded automatically into the databse when Postgres container starts.
+The other data set, `susy-test.sql`, needs to be loaded to the database manually later on, so that we can show data processing from CDC pipeline.
+
+As the Tensorflow-IO interprets all the messages comming from Kafka as strings, probably the most easy way how to pass the data to Tensorflow is to transform the message into CSV string.
+We can adjust messages produced by Debezium direcly in the Tensorflow, but in general it's good to adjust the data as soon as possible to save some network bandwidth and thus speed-up whole pipeline.
+This can be achieved by useing Kafka Connect single message transform (SMT).
+This SMT would select required variabled and convert them into CSV line which would be passed to the Kafka and later on to Tensorflow for processing.
+Compile this Kafka SMT into a jar file which will be deployed into Kafka Connect container and used later on as a source SMT:
+```
+mvn clean package -f connect/susy-smt/pom.xml
+```
+
+Now you can start Docker compose and run all the containers:
+```
+docker-compose up
+```
+
+Start the Debezium Postgres connector for the traning data set:
+```
+curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @register-postgres-train.json
+```
+
+Now localte Tensorflow token from its logs:
+```
+docker-compose logs tensorflow
+```
+and navigete to the corresponding URL and load `susy-search` Jupyter notebook.
+
+You can run part of the notebook, but before testing the model, you need to create a table with testing data set and start another Debezium Postgres connector for the test table:
+```
+export PGPASSWORD=postgres
+psql -h localhost -U postgres -f postgres/create-susy-test.sql
+curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @register-postgres-test.json
+```
+and populate it with data:
+```
+psql -h localhost -U postgres -f postgres/susy-test.sql
+```
+In case you don't want to stream the data while model is running, you can use only one connector Debezium connector which would capture both tables.
+By now you can run test part of the notebook and evaluate the model.
