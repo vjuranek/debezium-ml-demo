@@ -1,0 +1,19 @@
+{
+    "name": "weather-prediction-connector",
+    "config": {
+        "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+        "tasks.max": "1",
+        "database.hostname": "postgres",
+        "database.port": "5432",
+        "database.user": "postgres",
+        "database.password": "postgres",
+        "database.dbname" : "postgres",
+        "topic.prefix": "tf",
+        "table.include.list": "public.weather_.*",
+	"key.converter": "org.apache.kafka.connect.storage.StringConverter",
+	"value.converter": "org.apache.kafka.connect.storage.StringConverter",
+	"transforms": "unwrap, tocsv",
+	"transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+	"transforms.tocsv.type": "io.debezium.transforms.ValueToCsv"
+    }
+}

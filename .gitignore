@@ -136,3 +136,4 @@ data/
 susy-search/postgres/susy-train.sql
 susy-search/postgres/susy-test.sql
 housing-prices/**/*sql
+weather-forecast/**/*sql
