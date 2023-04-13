@@ -11,7 +11,7 @@ WEATHER_DATA_FILE_NAME = "jena_climate_2009_2016.csv.zip"
 
 SQL_DATA_TRAIN = "./postgres/weather-train.sql"
 TABLE_NAME_TRAIN = "weather_train"
-SQL_DATA_TEST = "./postgres/weather-test.sql"
+SQL_DATA_TEST = "./mysql/weather-test.sql"
 TABLE_NAME_TEST = "weather_test"
 COLUMNS = [
     "p",
@@ -34,7 +34,11 @@ COLUMNS = [
     "Year_sin",
     "Year_cos",
 ]
-CREATE_STMT = "CREATE TABLE {}(id SERIAL NOT NULL PRIMARY KEY, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float);"
+
+# SERIAL in Postgres results into int32, while in MySQL into int64 which complicates SMT,
+# therefore each DB as its own create table statement.
+CREATE_STMT_POSTGRES = "CREATE TABLE {}(id SERIAL NOT NULL PRIMARY KEY, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float);"
+CREATE_STMT_MYSQL = "CREATE TABLE {}(id int AUTO_INCREMENT NOT NULL PRIMARY KEY, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float, {} float);"
 INSERT_STMT = "INSERT INTO {}({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}) VALUES({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {});\n"
 
 def get_data():
@@ -91,19 +95,19 @@ def transform_timestamp_vector(df):
 
     return df
     
-def prepare_sql(data, file_name, table_name):
+def prepare_sql(create_stmt, data, file_name, table_name):
     with open(file_name, 'w') as f:
-        f.write(CREATE_STMT.format(table_name, *COLUMNS))
+        f.write(create_stmt.format(table_name, *COLUMNS))
         for row in data.values:
             f.write(INSERT_STMT.format(table_name, *COLUMNS, *row))
 
 df = transform_timestamp_vector(transform_wind_vector(fix_wind_data(get_data())))
-n = len(df)
+# n = len(df)
+n = 1000
 train_df = df[0:int(n*0.7)]
 val_df = df[int(n*0.7):int(n*0.9)]
-test_df = df[int(n*0.9):]
+# test_df = df[int(n*0.9):]
+test_df = df[int(n*0.9):n]
 
-print(train_df.head())
-            
-prepare_sql(train_df, SQL_DATA_TRAIN, TABLE_NAME_TRAIN)
-prepare_sql(test_df, SQL_DATA_TEST, TABLE_NAME_TEST)
+prepare_sql(CREATE_STMT_POSTGRES, train_df, SQL_DATA_TRAIN, TABLE_NAME_TRAIN)
+prepare_sql(CREATE_STMT_MYSQL, test_df, SQL_DATA_TEST, TABLE_NAME_TEST)

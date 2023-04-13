@@ -38,11 +38,21 @@ services:
     environment:
      - POSTGRES_USER=postgres
      - POSTGRES_PASSWORD=postgres
-  # tensorflow:
-  #   image: debezium/tensorflow-demo
-  #   build:
-  #     context: ./tensorflow
-  #   ports:
-  #     - 8888:8888
-  #   links:
-  #     - kafka
+  mysql:
+    image: debezium/mysql-weather
+    build:
+      context: ./mysql
+    ports:
+     - 3306:3306
+    environment:
+     - MYSQL_ROOT_PASSWORD=debezium
+     - MYSQL_USER=mysqluser
+     - MYSQL_PASSWORD=mysqlpw
+  tensorflow:
+    image: debezium/tensorflow-demo
+    build:
+      context: ./tensorflow
+    ports:
+      - 8888:8888
+    links:
+      - kafka
