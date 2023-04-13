@@ -13,6 +13,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>11</java.version>
         <version.kafkaconnect>3.2.1</version.kafkaconnect>
+        <version.slf4j>1.7.36</version.slf4j>
     </properties>
 
     <dependencies>
@@ -26,6 +27,11 @@
             <groupId>org.apache.kafka</groupId>
             <artifactId>connect-transforms</artifactId>
             <version>${version.kafkaconnect}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${version.slf4j}</version>
         </dependency>
     </dependencies>
     <build>
