@@ -15,7 +15,9 @@ services:
     environment:
      - ZOOKEEPER_CONNECT=zookeeper:2181
   connect:
-    image: quay.io/debezium/connect:2.2
+    image: debezium/connect-mnist
+    build:
+      context: connect
     ports:
      - 8083:8083
     links:
