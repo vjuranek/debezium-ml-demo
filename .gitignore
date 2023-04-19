@@ -131,6 +131,7 @@ dmypy.json
 
 # Data directory
 data/
+**/*.gz
 
 # SQL export of the data
 susy-search/postgres/susy-train.sql

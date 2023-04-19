@@ -1,14 +1,54 @@
 #!/usr/bin/env python3
 
 import gzip
+import os
 import struct
+import sys
+import urllib.request
+
+MNIST_TRAIN_LABEL_FILE = "train-labels-idx1-ubyte.gz"
+MNIST_TRAIN_IMAGE_FILE = "train-images-idx3-ubyte.gz"
+MNIST_TEST_LABEL_FILE = "t10k-labels-idx1-ubyte.gz"
+MNIST_TEST_IMAGE_FILE = "t10k-images-idx3-ubyte.gz"
+MNIST_URL_PREFIX = "http://yann.lecun.com/exdb/mnist/"
 
 MNIST_LABEL_MAGIC = 2049
 MNIST_IMAGE_MAGIC = 2051
 
+TRAIN_TABLE = "mnist_train"
+TEST_TABLE = "mnist_test"
 CREATE_STMT = ("CREATE TABLE {}(id SERIAL NOT NULL PRIMARY KEY, "
                "label SMALLINT, pixels BYTEA);\n")
 INSERT_STMT = "INSERT INTO {}(label, pixels) VALUES({}, '\\x{}');\n"
+
+FILE_DESTINATION = "postgres"
+TRAIN_SQL_FILE = TRAIN_TABLE + ".sql"
+TEST_SQL_FILE = TEST_TABLE + ".sql"
+
+
+def download_mnist_files(dest):
+    """
+    Downloads MNIST data samples into specified destination.
+    """
+    print("Downloading MNIST file with training labels")
+    urllib.request.urlretrieve(
+        MNIST_URL_PREFIX + MNIST_TRAIN_LABEL_FILE,
+        os.path.join(dest, MNIST_TRAIN_LABEL_FILE))
+
+    print("Downloading MNIST file with training images")
+    urllib.request.urlretrieve(
+        MNIST_URL_PREFIX + MNIST_TRAIN_IMAGE_FILE,
+        os.path.join(dest, MNIST_TRAIN_IMAGE_FILE))
+
+    print("Downloading MNIST file with test labels")
+    urllib.request.urlretrieve(
+        MNIST_URL_PREFIX + MNIST_TEST_LABEL_FILE,
+        os.path.join(dest, MNIST_TEST_LABEL_FILE))
+
+    print("Downloading MNIST file with test images")
+    urllib.request.urlretrieve(
+        MNIST_URL_PREFIX + MNIST_TEST_IMAGE_FILE,
+        os.path.join(dest, MNIST_TEST_IMAGE_FILE))
 
 
 def prepare_sql(label_path, img_path, sql_path, table_name):
@@ -43,16 +83,24 @@ def prepare_sql(label_path, img_path, sql_path, table_name):
                     sql_file.write(
                         INSERT_STMT.format(table_name, label[0], pixels.hex()))
 
+
+if len(sys.argv) > 1 and sys.argv[1] == "--download":
+    print("Downloading MNIST sample")
+    download_mnist_files(FILE_DESTINATION)
+
+
+print("Creating SQL file with training data")
 prepare_sql(
-    "../data/train-labels-idx1-ubyte.gz",
-    "../data/train-images-idx3-ubyte.gz",
-    "postgres/mnist-train.sql",
-    "mnist_train"
+    os.path.join(FILE_DESTINATION, MNIST_TRAIN_LABEL_FILE),
+    os.path.join(FILE_DESTINATION, MNIST_TRAIN_IMAGE_FILE),
+    os.path.join(FILE_DESTINATION, TRAIN_SQL_FILE),
+    TRAIN_TABLE
 )
 
+print("Creating SQL file with test data")
 prepare_sql(
-    "../data/t10k-labels-idx1-ubyte.gz",
-    "../data/t10k-images-idx3-ubyte.gz",
-    "postgres/mnist-test.sql",
-    "mnist_test"
+    os.path.join(FILE_DESTINATION, MNIST_TEST_LABEL_FILE),
+    os.path.join(FILE_DESTINATION, MNIST_TEST_IMAGE_FILE),
+    os.path.join(FILE_DESTINATION, TEST_SQL_FILE),
+    TEST_TABLE
 )
