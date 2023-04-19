@@ -10,15 +10,21 @@ import org.apache.kafka.connect.transforms.Transformation;
 
 public class MnistToCsv<R extends ConnectRecord<R>> implements Transformation<R> {
 
-    private static final int IMG_SIZE = 784;
+    private static final String LABEL_CONFIG = "label_column";
+    private static final String PIXEL_CONFIG = "pixels_column";
+    private static final String LABEL_COLUMN_DEFAULT = "label";
+    private static final String PIZELS_COLUMN_DEFAULT = "pixels";
+
+    private String labelFieldName;
+    private String pixlesFieldName;
 
     @Override
     public R apply(R r) {
         final Struct value = (Struct) r.value();
-        String key = value.getInt16("label").toString();
+        String key = value.getInt16(labelFieldName).toString();
 
         StringBuilder builder = new StringBuilder();
-        for (byte pixel : value.getBytes("pixels")) {
+        for (byte pixel : value.getBytes(pixlesFieldName)) {
             builder.append(pixel & 0xFF).append(",");
         }
         if (builder.length() > 0) {
@@ -30,16 +36,18 @@ public class MnistToCsv<R extends ConnectRecord<R>> implements Transformation<R>
     }
 
     @Override
+    public void configure(Map<String, ?> map) {
+        labelFieldName = map.containsKey(LABEL_CONFIG) ? (String) map.get(LABEL_CONFIG) : LABEL_COLUMN_DEFAULT;
+        pixlesFieldName = map.containsKey(PIXEL_CONFIG) ? (String) map.get(PIXEL_CONFIG) : PIZELS_COLUMN_DEFAULT;
+    }
+
+    @Override
     public ConfigDef config() {
         return new ConfigDef();
     }
 
     @Override
     public void close() {
-    }
-
-    @Override
-    public void configure(Map<String, ?> map) {
     }
 }
 
