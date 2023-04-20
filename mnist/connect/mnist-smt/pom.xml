@@ -7,7 +7,7 @@
     <groupId>io.debezium.transforms</groupId>
     <artifactId>mnist-to-csv</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>value-to-csv</name>
+    <name>mnist-to-csv</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
