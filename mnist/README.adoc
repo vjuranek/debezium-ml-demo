@@ -47,7 +47,7 @@ which determines the used version of Debezium and TensorFlow.
 Now you should be able to run the demo:
 
 ```
-$ docker compose up --build
+$ docker-compose up --build
 ```
 
 It will build custom images for Kafka connect, Postgres and Tensorflow.
@@ -95,7 +95,7 @@ To populate test table run
 
 ```
 $ export PGPASSWORD=postgres
-$ psql -h localhost -U postgres -f postgres/mnist-test.sql
+$ psql -h localhost -U postgres -f postgres/mnist_test.sql
 ```
 
 After a while you should be able to see model evaluation, i.e. it's accuracy and loss.
