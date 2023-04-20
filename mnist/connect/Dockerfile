@@ -1,4 +1,5 @@
-FROM quay.io/debezium/connect:2.2
+ARG DEBEZIUM_VERSION
+FROM quay.io/debezium/connect:${DEBEZIUM_VERSION}
 ENV KAFKA_CONNECT_MNIST_DIR=$KAFKA_CONNECT_PLUGINS_DIR/kafka-connect-mnist
 
 RUN mkdir $KAFKA_CONNECT_MNIST_DIR
