@@ -103,6 +103,9 @@ After a while you should be able to see model evaluation, i.e. it's accuracy and
 Remaining cells contains a function for plotting a single digit and predicting what is the number is in this image.
 For convenience there are two hard coded pixels of two images which you can use with this function and evaluate yourselves if the digit on the picture corresponds to what the model predicts. 
 
+You can also store couple of images manually into table `mnist_manual`.
+The last two cells read stream from this table and plot the first four images with the prediction what number is on the image.
+
 == Clean-up
 
 To stop the containers run
