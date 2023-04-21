@@ -103,7 +103,17 @@ After a while you should be able to see model evaluation, i.e. it's accuracy and
 Remaining cells contains a function for plotting a single digit and predicting what is the number is in this image.
 For convenience there are two hard coded pixels of two images which you can use with this function and evaluate yourselves if the digit on the picture corresponds to what the model predicts. 
 
-You can also store couple of images manually into table `mnist_manual`.
+This can be also done easily from images from the Kafka stream.
+You can either re-read test stream.
+In this case you need to use different Kafka consumer group.
+Or you can create new sample from e.g. test sample and push it into new table in the database.
+To store the first four images from test sample and pushing them into `mnist_manual` table, you can run
+
+```
+$ head -5 mnist_test.sql | sed s/test/manual/ > mnist_manual.sql 
+$ psql -h localhost -U postgres -f postgres/mnist_manual.sql
+```
+
 The last two cells read stream from this table and plot the first four images with the prediction what number is on the image.
 
 == Clean-up
