@@ -13,7 +13,7 @@ public class MnistToCsv<R extends ConnectRecord<R>> implements Transformation<R>
     private static final String LABEL_CONFIG = "label_column";
     private static final String PIXEL_CONFIG = "pixels_column";
     private static final String LABEL_COLUMN_DEFAULT = "label";
-    private static final String PIZELS_COLUMN_DEFAULT = "pixels";
+    private static final String PIXELS_COLUMN_DEFAULT = "pixels";
 
     private String labelFieldName;
     private String pixlesFieldName;
@@ -38,7 +38,7 @@ public class MnistToCsv<R extends ConnectRecord<R>> implements Transformation<R>
     @Override
     public void configure(Map<String, ?> map) {
         labelFieldName = map.containsKey(LABEL_CONFIG) ? (String) map.get(LABEL_CONFIG) : LABEL_COLUMN_DEFAULT;
-        pixlesFieldName = map.containsKey(PIXEL_CONFIG) ? (String) map.get(PIXEL_CONFIG) : PIZELS_COLUMN_DEFAULT;
+        pixlesFieldName = map.containsKey(PIXEL_CONFIG) ? (String) map.get(PIXEL_CONFIG) : PIXELS_COLUMN_DEFAULT;
     }
 
     @Override
