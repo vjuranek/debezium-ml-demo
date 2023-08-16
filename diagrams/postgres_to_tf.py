@@ -35,6 +35,7 @@ with Diagram(show=False):
             tensorflow = Custom("TensorFlow", tensorflow_icon)
             jupyter = Custom("Jupyter notebook", jupyter_icon)
             tensorflow >> jupyter
+            tensorflow << jupyter
 
     Postgresql("Postgres") >> debezium
     kafka >> tensorflow
