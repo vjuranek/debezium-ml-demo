@@ -8,11 +8,13 @@
         "database.user": "postgres",
         "database.password": "postgres",
         "database.dbname" : "postgres",
-        "topic.prefix": "tf",
+        "topic.prefix": "spark",
         "table.include.list": "public.boston_.*",
-	"key.converter": "org.apache.kafka.connect.storage.StringConverter",
-	"value.converter": "org.apache.kafka.connect.storage.StringConverter",
-	"transforms": "unwrap, housing",
+	"key.converter": "org.apache.kafka.connect.json.JsonConverter",
+	"value.converter": "org.apache.kafka.connect.json.JsonConverter",
+	"key.converter.schemas.enable": "false",
+	"value.converter.schemas.enable": "false",
+	"transforms": "unwrap",
 	"transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
 	"transforms.housing.type": "io.debezium.transforms.ValueToCsv"
     }

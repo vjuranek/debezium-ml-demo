@@ -1,4 +1,4 @@
-FROM quay.io/debezium/connect:2.2
+FROM quay.io/debezium/connect:2.4
 ENV KAFKA_CONNECT_SUSY_DIR=$KAFKA_CONNECT_PLUGINS_DIR/kafka-connect-val-to-csv
 
 RUN mkdir $KAFKA_CONNECT_SUSY_DIR
