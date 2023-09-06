@@ -139,3 +139,4 @@ susy-search/postgres/susy-test.sql
 housing-prices/**/*sql
 weather-forecast/**/*sql
 mnist/**/*.sql
+notes/
