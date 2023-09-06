@@ -140,3 +140,6 @@ housing-prices/**/*sql
 weather-forecast/**/*sql
 mnist/**/*.sql
 notes/
+**/.idea/
+iris/**/*.sql
+iris/iris-flink/dependency-reduced-pom.xml
