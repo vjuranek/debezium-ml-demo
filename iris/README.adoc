@@ -1,0 +1,12 @@
+= Iris classfication example using K-means
+
+== Apache Spark
+
+* `./bin/spark-submit $PATH_TO_THE_REPO/iris-spark/target/debezium-spark-1.0-SNAPSHOT-jar-with-dependencies.jar`
+
+
+== Apache Flink
+
+* `./bin/start-cluster.sh`
+* `./bin/flink run $PATH_TO_THE_REPO/iris/iris-flink/target/debezium-flink-0.1.jar`
+* `./bin/stop-cluster.sh`
