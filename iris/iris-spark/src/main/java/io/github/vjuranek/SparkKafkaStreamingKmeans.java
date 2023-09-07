@@ -36,7 +36,7 @@ public class SparkKafkaStreamingKmeans {
         Set<String> trainTopic = new HashSet<>(Arrays.asList("spark.public.iris_train"));
         Set<String> testTopic = new HashSet<>(Arrays.asList("spark.public.iris_test"));
         Map<String, Object> kafkaParams = new HashMap<>();
-        kafkaParams.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        kafkaParams.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:9092");
         kafkaParams.put(ConsumerConfig.GROUP_ID_CONFIG, "dbz");
         kafkaParams.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         kafkaParams.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
@@ -84,22 +84,10 @@ public class SparkKafkaStreamingKmeans {
         JSONParser jsonParser = new JSONParser();
         JSONObject o = (JSONObject)jsonParser.parse(json);
         return String.format("%s, %s %s %s %s",
-                irisClassToIntString((String) o.get("iris_class")),
+                o.get("iris_class"),
                 o.get("sepal_length"),
                 o.get("sepal_width"),
                 o.get("petal_length"),
                 o.get("petal_width"));
-    }
-
-    private static String irisClassToIntString(String irisClass) {
-        if (irisClass.equals("Iris-setosa")) {
-            return "0";
-        } else if (irisClass.equals("Iris-versicolor")) {
-            return "1";
-        } else if (irisClass.equals("Iris-virginica")) {
-            return "2";
-        } else {
-            throw new IllegalArgumentException(String.format("Unknown iris class '%s'", irisClass));
-        }
     }
 }

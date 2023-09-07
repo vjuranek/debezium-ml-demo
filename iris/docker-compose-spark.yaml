@@ -36,3 +36,9 @@ services:
     environment:
      - POSTGRES_USER=postgres
      - POSTGRES_PASSWORD=postgres
+  spark:
+    image: debezium/iris-spark
+    build:
+      context: ./iris-spark
+    links:
+     - kafka
