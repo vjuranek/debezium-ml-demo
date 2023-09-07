@@ -34,25 +34,27 @@ public class FlinkKafkaKmeans {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         KafkaSource<ObjectNode> train = KafkaSource.<ObjectNode>builder()
-                .setBootstrapServers("localhost:9092")
+                .setBootstrapServers("kafka:9092")
                 .setTopics("flink.public.iris_train")
-                .setGroupId("my-group")
+                .setClientIdPrefix("train")
+                .setGroupId("dbz")
                 .setStartingOffsets(OffsetsInitializer.earliest())
                 .setDeserializer(KafkaRecordDeserializationSchema.of(new JSONKeyValueDeserializationSchema(false)))
                 .build();
         DataStreamSource<ObjectNode> trainStream = env.fromSource(train, WatermarkStrategy.noWatermarks(), "Debezium train");
 
         KafkaSource<ObjectNode> test = KafkaSource.<ObjectNode>builder()
-                .setBootstrapServers("localhost:9092")
+                .setBootstrapServers("kafka:9092")
                 .setTopics("flink.public.iris_test")
-                .setGroupId("my-group")
+                .setClientIdPrefix("test")
+                .setGroupId("dbz")
                 .setStartingOffsets(OffsetsInitializer.earliest())
                 .setDeserializer(KafkaRecordDeserializationSchema.of(new JSONKeyValueDeserializationSchema(false)))
                 .build();
         DataStreamSource<ObjectNode> testStream = env.fromSource(test, WatermarkStrategy.noWatermarks(), "Debezium test");
 
         KafkaSink<String> kafkaSink = KafkaSink.<String>builder()
-                .setBootstrapServers("localhost:9092")
+                .setBootstrapServers("kafka:9092")
                 .setRecordSerializer(KafkaRecordSerializationSchema.builder()
                         .setTopic("iris_predictions")
                         .setValueSerializationSchema(new SimpleStringSchema())
