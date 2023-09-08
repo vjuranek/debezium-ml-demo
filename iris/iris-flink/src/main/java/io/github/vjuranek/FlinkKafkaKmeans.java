@@ -105,7 +105,7 @@ public class FlinkKafkaKmeans {
     private static class ResultMapper implements MapFunction<Row, String> {
         @Override
         public String map(Row result) {
-            return result.toString();
+            return String.format(String.format("%s is classified as %s", result.getField("features"), result.getField("prediction")));
         }
     }
 
@@ -113,9 +113,9 @@ public class FlinkKafkaKmeans {
         @Override
         public KMeansModelData map(Integer integer) {
             DenseVector[] centroids = new DenseVector[3];
-            centroids[0] = new DenseVector(new double[] {5.0, 3.6, 1.4, 0.2});
-            centroids[1] = new DenseVector(new double[] {6.0, 2.9, 4.5, 1.5});
-            centroids[2] = new DenseVector(new double[] {6.8, 3.0, 5.5, 2.1});
+            centroids[0] = new DenseVector(new double[] {6.0, 3.0, 1.0, 0.0});
+            centroids[1] = new DenseVector(new double[] {6.0, 3.0, 2.0, 1.0});
+            centroids[2] = new DenseVector(new double[] {6.0, 3.0, 3.0, 2.0});
 
             DenseVector weights = new DenseVector(3);
             Arrays.fill(weights.values, 0);
