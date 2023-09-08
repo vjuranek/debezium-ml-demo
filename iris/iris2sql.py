@@ -4,7 +4,8 @@ import numpy as np
 from sklearn import datasets
 from sklearn import model_selection
 
-TRAIN_FILE = "./postgres/iris_train.sql"
+TRAIN_FILE1 = "./postgres/iris_train1.sql"
+TRAIN_FILE2 = "./postgres/iris_train2.sql"
 TEST_FILE = "./postgres/iris_test.sql"
 
 TRAIN_TABLE = "iris_train"
@@ -16,9 +17,10 @@ COLUMNS = [
     "petal_width",
     "iris_class",
 ]
-CREATE_STMT = "CREATE TABLE {}(id SERIAL NOT NULL PRIMARY KEY,"\
-    " {} float, {} float, {} float, {} float, {} int);\n"
-INSERT_STMT = "INSERT INTO {}({}, {}, {}, {}, {}) "\
+CREATE_STMT = "CREATE TABLE IF NOT EXISTS {}" \
+    "(id SERIAL NOT NULL PRIMARY KEY, " \
+    "{} float, {} float, {} float, {} float, {} int);\n"
+INSERT_STMT = "INSERT INTO {}({}, {}, {}, {}, {}) " \
     "VALUES({}, {}, {}, {}, {});\n"
 
 def prepare_sql(data, file_name, table_name):
@@ -35,7 +37,10 @@ iris_merged = iris_merged.astype('object')
 iris_merged[:, 4] = iris_merged[:, 4].astype(int)
 
 train, test = model_selection.train_test_split(
-    iris_merged, test_size=0.08)
+    iris_merged, test_size=0.07)
 
-prepare_sql(train, TRAIN_FILE, TRAIN_TABLE)
+train1, train2 = model_selection.train_test_split(train, test_size=0.99)
+
+prepare_sql(train1, TRAIN_FILE1, TRAIN_TABLE)
+prepare_sql(train2, TRAIN_FILE2, TRAIN_TABLE)
 prepare_sql(test, TEST_FILE, TEST_TABLE)
