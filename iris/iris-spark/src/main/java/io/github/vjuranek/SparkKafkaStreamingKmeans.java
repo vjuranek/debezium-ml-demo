@@ -59,21 +59,25 @@ public class SparkKafkaStreamingKmeans {
                 .map(LabeledPoint::parse);
 
         Vector[] initCenters = new Vector[]{
-                Vectors.dense(new double[]{5.0, 3.6, 1.4, 0.2}),
-                Vectors.dense(new double[]{6.0, 2.9, 4.5, 1.5}),
-                Vectors.dense(new double[]{6.8, 3.0, 5.5, 2.1})
+                Vectors.dense(new double[]{6.0, 3.0, 1.0, 0.0}),
+                Vectors.dense(new double[]{6.0, 3.0, 2.0, 1.0}),
+                Vectors.dense(new double[]{6.0, 3.0, 3.0, 2.0})
+//                Vectors.dense(new double[]{4.4, 3.2, 1.3, 0.2}),
+//                Vectors.dense(new double[]{5.7, 2.9, 4.2, 1.3}),
+//                Vectors.dense(new double[]{6.5, 3.0, 5.2, 2.0})
         };
         double[] weights = new double[]{0.0, 0.0, 0.0};
 
         StreamingKMeans model = new StreamingKMeans()
                 .setK(3)
-                //.setDecayFactor(1.0)
+                //.setDecayFactor(0.5)
                 .setInitialCenters(initCenters, weights);
+                //.setRandomCenters(4, 0.0, 12345);
 
         model.trainOn(train.map(lp -> lp.getFeatures()));
 
         JavaPairDStream<Double, Vector> predict = test.mapToPair(lp -> new Tuple2<>(lp.label(), lp.features()));
-        model.predictOnValues(predict).print(12);
+        model.predictOnValues(predict).print(11);
 
         jssc.start();
         jssc.awaitTermination();
