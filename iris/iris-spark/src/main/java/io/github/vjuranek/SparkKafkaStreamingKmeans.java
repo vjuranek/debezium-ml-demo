@@ -62,17 +62,12 @@ public class SparkKafkaStreamingKmeans {
                 Vectors.dense(new double[]{6.0, 3.0, 1.0, 0.0}),
                 Vectors.dense(new double[]{6.0, 3.0, 2.0, 1.0}),
                 Vectors.dense(new double[]{6.0, 3.0, 3.0, 2.0})
-//                Vectors.dense(new double[]{4.4, 3.2, 1.3, 0.2}),
-//                Vectors.dense(new double[]{5.7, 2.9, 4.2, 1.3}),
-//                Vectors.dense(new double[]{6.5, 3.0, 5.2, 2.0})
         };
         double[] weights = new double[]{0.0, 0.0, 0.0};
 
         StreamingKMeans model = new StreamingKMeans()
                 .setK(3)
-                //.setDecayFactor(0.5)
                 .setInitialCenters(initCenters, weights);
-                //.setRandomCenters(4, 0.0, 12345);
 
         model.trainOn(train.map(lp -> lp.getFeatures()));
 
