@@ -14,12 +14,15 @@ from diagrams.onprem.queue import Kafka
 debezium_icon = "img/debezium.png"
 # urlretrieve(debezium_url, debezium_icon)
 
+graph_attr = {
+     "bgcolor": "transparent",
+}
 
-with Diagram(show=False):
+with Diagram(show=False, graph_attr=graph_attr):
 
     with Cluster("Kafka Connect"):
         debezium = Custom("Debezium", debezium_icon)
-        kafka = [Kafka("Kafka train"), Kafka("Kafka test"), Kafka("test")]
+        kafka = [Kafka("Kafka train"), Kafka("Kafka test")]
         debezium >> kafka
 
     Postgresql("Postgres") >> debezium

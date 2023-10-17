@@ -24,7 +24,11 @@ jupyter_icon = "img/jupyter.png"
 # urlretrieve(jupyter_url, jupyter_icon)
 
 
-with Diagram(show=False):
+graph_attr = {
+     "bgcolor": "transparent",
+}
+
+with Diagram(show=False, graph_attr=graph_attr):
 
     with Cluster("Kafka Connect"):
         debezium = Custom("Debezium", debezium_icon)
