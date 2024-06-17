@@ -20,10 +20,10 @@ graph_attr = {
 
 with Diagram(show=False, graph_attr=graph_attr):
 
-    with Cluster("Kafka Connect"):
+    with Cluster("Apache Flink"):
         debezium = Custom("Debezium", debezium_icon)
-        kafka = [Kafka("Kafka train"), Kafka("Kafka test")]
-        debezium >> kafka
+        flink = [Flink("Flink train"), Flink("Flink test")]
+        debezium >> flink
 
     Postgresql("Postgres") >> debezium
-    kafka >> Flink("Apache Flink") >> Kafka("Kafka predictions")
+    flink >> Kafka("Kafka predictions")
